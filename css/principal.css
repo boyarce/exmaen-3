@@ -1,0 +1,11 @@
+
+.error-msg {
+    border: 2px solid red;
+    background-color: bisque;
+    color:red;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 15px;
+    width: 400px;
+}
