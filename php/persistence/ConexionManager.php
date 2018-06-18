@@ -1,13 +1,14 @@
 <?php
 
 class ConexionManager extends PDO {
-    
-    const DB_USR="dai-usr";
-    const DB_PWD="dai5501";    
-    const DSN='mysql:host=localhost;dbname=demo_db;charset=utf8';
-    
-    public function __construct() {        
-        parent::__construct(static::DSN, static::DB_USR, static::DB_PWD);
+
+    private static $URL = "mysql:host=localhost;dbname=cine;charset=utf8";
+    private static $USUARIO = "user";
+    private static $PASS = "123";
+    private static $OPCIONES = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+
+    function __construct() {
+        parent::__construct(self::$URL, self::$USUARIO, self::$PASS, self::$OPCIONES);
     }
-    
+   
 }

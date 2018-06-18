@@ -1,48 +1,44 @@
 <?php
-include_once __DIR__.'/../persistence/AbstractDAO.php';
-include_once __DIR__.'/../model/Usuario.php';
 
-class UsuarioDAO extends AbstractDAO {
+
+class UsuarioDAO {
         
-    public function getAll() {
-        $query = "SELECT a.login, a.password, 
-                         b.dni, b.nombre, b.apellido, b.fecha_nacimiento, 
-                         c.id, c.nombre as perfil
-                  FROM usuario a, persona b, perfil c
-                  WHERE a.dni = b.dni and a.perfil = c.id";
-        $listado = array();
-        $statement = $this->conexion->prepare($query);
-        $statement->execute();
+    public $conexion;
+	function __construct($conexion)
+	{
+		$this->conexion = $conexion;
+	}
+	public function agregarUsuario($rut,$nombre,$apPaterno,$apMaterno,$fechaNac,$telefono,$nombreUsuario,$contrasenia,$tipoUsuario){
+		try {
+			$sql = $this->conexion->prepare("INSERT INTO PERSONA (rutPersona,nombrePersona,apellidoPaterno,apellidoMaterno,fechaNacimiento,telefono)VALUES(?,?,?,?,?,?,?)");
+			$sql->execute(array($rut,$nombre,$apPaterno,$apMaterno,$fechaNac,$telefono));
+			$sql = $this->conexion->prepare("INSERT INTO USUARIO_SISTEMA(rutPersona,nombreUsuario,contrasenia,codigoTipoUsuario)VALUES(?,?,?,?)");
+			$sql->execute(array($rut,$nombreUsuario,$contrasenia,$tipoUsuario));	
+		} catch (PDOException $e) {
+			echo $e->getMessage();
+		}
+		
+	}
         
-        while($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $usr = new Usuario($row["dni"], $row["fecha_nacimiento"]);
-            $perfil = new Perfil($row["id"]);
-            $perfil->setNombre($row["perfil"]);
-            $usr->setNombre($row["nombre"]);
-            $usr->setApellido($row["apellido"]);
-            $usr->setUsername($row["login"]);
-            $usr->setPerfil($perfil);
-            array_push($listado, $usr);
+         public function selectTipoUsuario()
+         {
+        
+            $sql = $this->conexion->query("SELECT * FROM TIPO_USUARIO");
+            ?>
+            <select name="tipoUsuario" id="tipoUsuario">
+                <option value="0" selected>Seleccione el usuario</option>
+                <?php
+                while ($fila = $sql->fetch()) {
+                    ?>
+                    <option value="<?= $fila['codigoTipoUsuario'] ?>"><?= $fila['descripcion'] ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <?php
+        
         }
-        
-        return $listado;
-    }
-
-    public function get($id) {
-      
-    }
-
-    public function modify($element) {
-        
-    }
-
-    public function remove($id) {
-        
-    }
-    
-    public function add($element) {
-        
     }
     
 
-}
+
